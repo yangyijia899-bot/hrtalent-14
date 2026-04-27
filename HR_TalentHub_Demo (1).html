@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TalentHub · 智能HR知识库</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f1923;
+  --ink-2: #2d3f50;
+  --ink-3: #4a5f73;
+  --ink-4: #7a90a3;
+  --ink-5: #b0c0cc;
+  --paper: #f7f5f0;
+  --paper-2: #eeeae3;
+  --paper-3: #e3ddd4;
+  --accent: #1a6b5c;
+  --accent-2: #25a088;
+  --accent-light: #e0f2ed;
+  --accent-warm: #c7621e;
+  --accent-warm-light: #fdecd8;
+  --gold: #c49b2f;
+  --gold-light: #faf3de;
+  --danger: #c0392b;
+  --danger-light: #fde8e6;
+  --white: #ffffff;
+  --sidebar-w: 260px;
+  --toc-w: 220px;
+  --header-h: 56px;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 3px rgba(15,25,35,0.08);
+  --shadow: 0 4px 16px rgba(15,25,35,0.10);
+  --shadow-lg: 0 12px 40px rgba(15,25,35,0.14);
+  --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* =========== SCROLLBAR =========== */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--paper-3); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-5); }
+
+/* =========== LAYOUT =========== */
+#app { display: flex; flex-direction: column; height: 100vh; }
+
+/* =========== TOPBAR =========== */
+#topbar {
+  height: var(--header-h);
+  background: var(--white);
+  border-bottom: 1px solid var(--paper-2);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+#topbar .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.logo-mark::before {
+  content: '';
+  width: 16px; height: 2px;
+  background: white;
+  position: absolute;
+  top: 10px;
+  box-shadow: 0 4px 0 white, 0 8px 0 rgba(255,255,255,0.4);
+}
+.logo-text {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+.logo-text span { color: var(--accent); }
+
+#search-bar {
+  flex: 1;
+  max-width: 480px;
+  position: relative;
+}
+#search-input {
+  width: 100%;
+  height: 36px;
+  border: 1.5px solid var(--paper-3);
+  border-radius: 99px;
+  padding: 0 16px 0 40px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px;
+  color: var(--ink);
+  background: var(--paper);
+  outline: none;
+  transition: var(--transition);
+}
+#search-input:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 3px var(--accent-light); }
+#search-input::placeholder { color: var(--ink-4); }
+.search-icon {
+  position: absolute;
+  left: 13px; top: 50%; transform: translateY(-50%);
+  color: var(--ink-4);
+  pointer-events: none;
+}
+#search-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0; right: 0;
+  background: white;
+  border: 1px solid var(--paper-3);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  display: none;
+  z-index: 200;
+  animation: dropIn 0.15s ease;
+}
+#search-dropdown.visible { display: block; }
+@keyframes dropIn { from { opacity:0; transform: translateY(-6px); } to { opacity:1; transform:none; } }
+.search-section-label {
+  padding: 10px 16px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.search-result-item {
+  padding: 10px 16px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.search-result-item:hover { background: var(--paper); }
+.search-result-icon {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.search-result-title { font-size: 13.5px; font-weight: 500; color: var(--ink); }
+.search-result-title em { color: var(--accent); font-style: normal; font-weight: 700; }
+.search-result-cat { font-size: 11.5px; color: var(--ink-4); margin-top: 1px; }
+.search-no-result { padding: 24px 16px; text-align: center; color: var(--ink-4); font-size: 13.5px; }
+
+.topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.btn-icon {
+  width: 36px; height: 36px;
+  border: none; background: transparent; border-radius: 8px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--ink-3); transition: var(--transition);
+  position: relative;
+}
+.btn-icon:hover { background: var(--paper); color: var(--ink); }
+.btn-icon .badge {
+  position: absolute; top: 4px; right: 4px;
+  width: 8px; height: 8px;
+  background: var(--accent-warm);
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.avatar {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 12px; font-weight: 600;
+  cursor: pointer; flex-shrink: 0;
+}
+
+/* =========== MAIN AREA =========== */
+#main { display: flex; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+/* =========== LEFT SIDEBAR =========== */
+#sidebar {
+  width: var(--sidebar-w);
+  height: 100%;
+  background: var(--white);
+  border-right: 1px solid var(--paper-2);
+  overflow-y: auto;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition);
+}
+
+.sidebar-section { padding: 16px 12px 8px; }
+.sidebar-section-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0 8px;
+  margin-bottom: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  font-weight: 450;
+  transition: var(--transition);
+  text-decoration: none;
+  position: relative;
+  user-select: none;
+}
+.nav-item:hover { background: var(--paper); color: var(--ink); }
+.nav-item.active {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 600;
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 3px; background: var(--accent);
+  border-radius: 0 2px 2px 0;
+}
+.nav-item-icon { width: 18px; text-align: center; flex-shrink: 0; font-size: 15px; }
+.nav-item-count {
+  margin-left: auto;
+  font-size: 11px;
+  padding: 1px 7px;
+  background: var(--paper-2);
+  border-radius: 99px;
+  color: var(--ink-4);
+  font-weight: 500;
+}
+.nav-item.active .nav-item-count { background: var(--accent-light); color: var(--accent); }
+
+.category-children { padding-left: 16px; }
+.category-toggle { cursor: pointer; }
+.category-toggle .toggle-arrow {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--ink-4);
+  transition: transform 0.2s;
+}
+.category-toggle.open .toggle-arrow { transform: rotate(90deg); }
+
+.sidebar-divider { height: 1px; background: var(--paper-2); margin: 8px 12px; }
+.sidebar-footer { padding: 12px; margin-top: auto; }
+.ai-btn-sidebar {
+  width: 100%;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-2) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  transition: var(--transition);
+}
+.ai-btn-sidebar:hover { opacity: 0.9; transform: translateY(-1px); }
+.ai-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-2); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+/* =========== CONTENT AREA =========== */
+#content-area {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  position: relative;
+}
+
+/* =========== HOME PAGE =========== */
+#home-page {
+  flex: 1;
+  padding: 40px 48px;
+  max-width: 1000px;
+}
+.home-hero {
+  margin-bottom: 40px;
+}
+.home-hero h1 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+.home-hero h1 span { color: var(--accent); }
+.home-hero p { font-size: 15px; color: var(--ink-3); line-height: 1.7; max-width: 560px; }
+
+.home-stats {
+  display: flex;
+  gap: 16px;
+  margin: 24px 0 40px;
+}
+.stat-card {
+  flex: 1;
+  background: white;
+  border: 1px solid var(--paper-2);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: var(--transition);
+}
+.stat-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+.stat-number { font-size: 28px; font-weight: 700; color: var(--ink); font-family: 'Noto Serif SC', serif; }
+.stat-label { font-size: 12.5px; color: var(--ink-4); margin-top: 2px; }
+.stat-icon { font-size: 20px; margin-bottom: 8px; }
+
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.section-link { font-size: 13px; color: var(--accent); cursor: pointer; text-decoration: none; font-weight: 500; }
+.section-link:hover { text-decoration: underline; }
+
+.category-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 36px; }
+.category-card {
+  background: white;
+  border: 1px solid var(--paper-2);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.category-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  opacity: 0.07;
+  transform: translate(20px, 20px);
+}
+.category-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); border-color: transparent; }
+.cat-icon { font-size: 24px; margin-bottom: 10px; }
+.cat-name { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.cat-desc { font-size: 12px; color: var(--ink-4); line-height: 1.5; }
+.cat-count { font-size: 11.5px; color: var(--ink-4); margin-top: 10px; font-weight: 500; }
+
+.article-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; }
+.article-card {
+  background: white;
+  border: 1px solid var(--paper-2);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.article-card:hover { box-shadow: var(--shadow); border-color: transparent; }
+.article-card-icon {
+  width: 38px; height: 38px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.article-card-body { flex: 1; min-width: 0; }
+.article-card-title {
+  font-size: 14.5px; font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.article-card-excerpt {
+  font-size: 13px; color: var(--ink-4);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.article-card-meta {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 8px;
+}
+.article-tag {
+  font-size: 11px; font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+  letter-spacing: 0.03em;
+}
+.article-meta-item { font-size: 12px; color: var(--ink-4); display: flex; align-items: center; gap: 4px; }
+
+/* =========== ARTICLE VIEW =========== */
+#article-page { display: none; flex: 1; }
+#article-page.visible { display: flex; }
+
+.article-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 40px 60px;
+}
+.article-toc {
+  width: var(--toc-w);
+  flex-shrink: 0;
+  padding: 32px 20px;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  height: 100%;
+  border-left: 1px solid var(--paper-2);
+}
+.toc-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-4);
+  margin-bottom: 12px;
+}
+.toc-item {
+  font-size: 12.5px;
+  color: var(--ink-4);
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+  line-height: 1.4;
+  border-left: 2px solid transparent;
+  margin-bottom: 2px;
+}
+.toc-item:hover { color: var(--ink); background: var(--paper); }
+.toc-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-light); font-weight: 600; }
+.toc-item.level-2 { padding-left: 20px; font-size: 12px; }
+.toc-item.level-3 { padding-left: 30px; font-size: 11.5px; }
+
+/* progress bar */
+#reading-progress {
+  position: fixed;
+  top: var(--header-h);
+  left: 0; right: 0;
+  height: 3px;
+  background: transparent;
+  z-index: 99;
+}
+#reading-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  width: 0%;
+  transition: width 0.1s linear;
+  border-radius: 0 2px 2px 0;
+}
+
+.article-header { max-width: 720px; margin: 0 auto 40px; }
+.article-breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12.5px; color: var(--ink-4);
+  margin-bottom: 16px;
+}
+.article-breadcrumb a { color: var(--accent); cursor: pointer; text-decoration: none; }
+.article-breadcrumb a:hover { text-decoration: underline; }
+.breadcrumb-sep { color: var(--ink-5); }
+
+.article-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.article-meta-row {
+  display: flex; align-items: center; gap: 16px;
+  flex-wrap: wrap;
+}
+.article-meta-badge {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12.5px; color: var(--ink-4);
+}
+.article-action-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--paper-2);
+}
+.btn-action {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  border-radius: 99px;
+  border: 1.5px solid var(--paper-3);
+  background: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-action:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.btn-action.active { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+/* Article body */
+.article-body {
+  max-width: 720px;
+  margin: 0 auto;
+  font-size: 15.5px;
+  line-height: 1.85;
+  color: var(--ink-2);
+}
+.article-body h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--ink);
+  margin: 36px 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid var(--paper-2);
+}
+.article-body h3 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 17px; font-weight: 700;
+  color: var(--ink);
+  margin: 28px 0 10px;
+}
+.article-body p { margin-bottom: 16px; }
+.article-body ul, .article-body ol {
+  padding-left: 22px;
+  margin-bottom: 16px;
+}
+.article-body li { margin-bottom: 6px; }
+.article-body strong { font-weight: 700; color: var(--ink); }
+.article-body em { font-style: italic; color: var(--ink-3); }
+.article-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+.article-body blockquote {
+  border-left: 4px solid var(--accent);
+  background: var(--accent-light);
+  padding: 14px 18px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin: 20px 0;
+  color: var(--ink-2);
+  font-style: italic;
+}
+.article-body code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  background: var(--paper-2);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--accent-warm);
+}
+.article-body pre {
+  background: var(--ink);
+  border-radius: var(--radius);
+  padding: 20px;
+  overflow-x: auto;
+  margin: 20px 0;
+  position: relative;
+}
+.article-body pre code {
+  background: transparent;
+  color: #7dd3b4;
+  padding: 0;
+  font-size: 13.5px;
+  border-radius: 0;
+}
+.copy-btn {
+  position: absolute;
+  top: 10px; right: 10px;
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.1);
+  border: none; border-radius: 4px;
+  color: rgba(255,255,255,0.6);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.copy-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+
+.article-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 14px;
+}
+.article-body th {
+  background: var(--ink);
+  color: white;
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+}
+.article-body td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--paper-2);
+  vertical-align: top;
+}
+.article-body tr:hover td { background: var(--paper); }
+
+.callout {
+  display: flex; gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  margin: 20px 0;
+}
+.callout.info { background: var(--accent-light); border: 1px solid rgba(26,107,92,0.2); }
+.callout.warning { background: var(--accent-warm-light); border: 1px solid rgba(199,98,30,0.2); }
+.callout.tip { background: var(--gold-light); border: 1px solid rgba(196,155,47,0.2); }
+.callout-icon { font-size: 18px; flex-shrink: 0; }
+.callout-body { font-size: 14px; line-height: 1.6; }
+.callout.info .callout-body { color: var(--accent); }
+.callout.warning .callout-body { color: var(--accent-warm); }
+.callout.tip .callout-body { color: #8a6d20; }
+
+/* Highlight */
+.highlight-yellow { background: #fff176; border-radius: 2px; padding: 0 2px; cursor: pointer; position: relative; }
+.highlight-blue { background: #b3e5fc; border-radius: 2px; padding: 0 2px; cursor: pointer; }
+.highlight-green { background: #c8e6c9; border-radius: 2px; padding: 0 2px; cursor: pointer; }
+.highlight-pink { background: #f8bbd0; border-radius: 2px; padding: 0 2px; cursor: pointer; }
+
+.highlight-toolbar {
+  position: fixed;
+  background: var(--ink);
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  z-index: 500;
+  box-shadow: var(--shadow-lg);
+  animation: popIn 0.12s ease;
+}
+@keyframes popIn { from { opacity:0; transform: scale(0.9); } to { opacity:1; transform: none; } }
+.highlight-toolbar.visible { display: flex; }
+.hl-btn {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+  transition: transform var(--transition);
+}
+.hl-btn:hover { transform: scale(1.2); }
+.hl-sep { width: 1px; height: 16px; background: rgba(255,255,255,0.2); }
+.hl-action {
+  color: rgba(255,255,255,0.8);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: var(--transition);
+}
+.hl-action:hover { background: rgba(255,255,255,0.15); color: white; }
+
+/* Rating */
+.rating-section {
+  margin: 48px 0 32px;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 24px;
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+.rating-title { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
+.stars { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
+.star { font-size: 24px; cursor: pointer; transition: transform var(--transition); }
+.star:hover, .star.active { transform: scale(1.2); }
+.star.active { color: var(--gold); }
+.star:not(.active) { color: var(--paper-3); }
+.rating-thanks { font-size: 13px; color: var(--accent); font-weight: 600; display: none; }
+
+/* =========== AI PANEL =========== */
+#ai-panel {
+  position: fixed;
+  top: var(--header-h);
+  right: -420px;
+  width: 400px;
+  bottom: 0;
+  background: white;
+  border-left: 1px solid var(--paper-2);
+  display: flex;
+  flex-direction: column;
+  z-index: 90;
+  transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: -4px 0 20px rgba(15,25,35,0.08);
+}
+#ai-panel.open { right: 0; }
+
+.ai-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--paper-2);
+  display: flex; align-items: center; gap: 10px;
+}
+.ai-header-icon {
+  width: 32px; height: 32px;
+  background: var(--ink);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.ai-header-text { flex: 1; }
+.ai-header-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+.ai-header-sub { font-size: 11.5px; color: var(--ink-4); }
+.ai-close {
+  width: 28px; height: 28px;
+  border: none; background: transparent;
+  border-radius: 6px; cursor: pointer;
+  color: var(--ink-4); font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+.ai-close:hover { background: var(--paper); color: var(--ink); }
+
+#ai-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ai-welcome {
+  text-align: center;
+  padding: 24px 16px;
+}
+.ai-welcome-icon { font-size: 32px; margin-bottom: 12px; }
+.ai-welcome-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.ai-welcome-text { font-size: 13px; color: var(--ink-4); line-height: 1.6; margin-bottom: 16px; }
+.ai-suggestion-chips { display: flex; flex-direction: column; gap: 6px; }
+.chip {
+  padding: 8px 12px;
+  background: var(--paper);
+  border: 1px solid var(--paper-3);
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  cursor: pointer;
+  text-align: left;
+  transition: var(--transition);
+  font-family: 'DM Sans', sans-serif;
+}
+.chip:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+
+.msg { display: flex; flex-direction: column; gap: 4px; }
+.msg.user { align-items: flex-end; }
+.msg.ai { align-items: flex-start; }
+.msg-bubble {
+  max-width: 88%;
+  padding: 11px 14px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+.msg.user .msg-bubble {
+  background: var(--ink);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+.msg.ai .msg-bubble {
+  background: var(--paper);
+  color: var(--ink-2);
+  border-bottom-left-radius: 4px;
+  border: 1px solid var(--paper-2);
+}
+.msg-bubble strong { font-weight: 700; }
+.msg-bubble ul { padding-left: 18px; margin: 6px 0; }
+.msg-bubble li { margin-bottom: 3px; }
+.msg-source {
+  font-size: 11.5px;
+  color: var(--ink-4);
+  display: flex; align-items: center; gap: 4px;
+  margin-top: 4px;
+  cursor: pointer;
+}
+.msg-source:hover { color: var(--accent); }
+.msg-source-tag {
+  padding: 2px 8px;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ai-typing {
+  display: flex; align-items: center; gap: 4px;
+  padding: 12px 14px;
+  background: var(--paper);
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+  border: 1px solid var(--paper-2);
+}
+.typing-dot {
+  width: 6px; height: 6px;
+  background: var(--ink-4);
+  border-radius: 50%;
+  animation: typing 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing { 0%,80%,100%{transform:scale(0.8);opacity:0.4} 40%{transform:scale(1);opacity:1} }
+
+.ai-input-area {
+  padding: 12px 16px;
+  border-top: 1px solid var(--paper-2);
+  background: white;
+}
+.ai-input-wrap {
+  display: flex; align-items: flex-end; gap: 8px;
+  background: var(--paper);
+  border: 1.5px solid var(--paper-3);
+  border-radius: 12px;
+  padding: 8px 12px;
+  transition: var(--transition);
+}
+.ai-input-wrap:focus-within { border-color: var(--accent); background: white; box-shadow: 0 0 0 3px var(--accent-light); }
+#ai-input {
+  flex: 1; border: none; background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px; color: var(--ink);
+  resize: none; outline: none;
+  min-height: 20px; max-height: 120px;
+  line-height: 1.5;
+}
+#ai-input::placeholder { color: var(--ink-4); }
+#ai-send {
+  width: 30px; height: 30px;
+  background: var(--accent);
+  border: none; border-radius: 8px;
+  color: white; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+  flex-shrink: 0;
+  font-size: 14px;
+}
+#ai-send:hover { background: var(--accent-2); transform: scale(1.05); }
+#ai-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.ai-disclaimer { text-align: center; font-size: 11px; color: var(--ink-5); margin-top: 6px; }
+
+/* =========== FLOATING AI BUTTON =========== */
+#ai-fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 52px; height: 52px;
+  background: var(--ink);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 4px 20px rgba(15,25,35,0.3);
+  z-index: 89;
+  transition: var(--transition);
+  animation: fabIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes fabIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+#ai-fab:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(15,25,35,0.35); }
+#ai-fab.hidden { display: none; }
+
+/* =========== TOAST =========== */
+#toast-container {
+  position: fixed; top: 72px; right: 20px;
+  display: flex; flex-direction: column; gap: 8px;
+  z-index: 999;
+}
+.toast {
+  padding: 11px 16px;
+  background: var(--ink);
+  color: white;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s both;
+  display: flex; align-items: center; gap: 8px;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
+@keyframes toastOut { to { opacity: 0; transform: translateX(20px); } }
+
+/* =========== EMPTY STATE =========== */
+.empty-state { text-align: center; padding: 60px 20px; }
+.empty-state-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+.empty-state h3 { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+.empty-state p { font-size: 13.5px; color: var(--ink-4); }
+
+/* =========== RESPONSIVE =========== */
+@media (max-width: 900px) {
+  #sidebar { position: fixed; left: -270px; top: var(--header-h); height: calc(100% - var(--header-h)); z-index: 80; transition: left var(--transition); }
+  #sidebar.mobile-open { left: 0; box-shadow: var(--shadow-lg); }
+  .article-toc { display: none; }
+  #home-page { padding: 24px 20px; }
+  .category-grid { grid-template-columns: 1fr 1fr; }
+  .home-stats { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<!-- Reading Progress Bar -->
+<div id="reading-progress"><div id="reading-progress-bar"></div></div>
+
+<!-- Highlight Toolbar -->
+<div class="highlight-toolbar" id="highlight-toolbar">
+  <div class="hl-btn" style="background:#fff176" onclick="applyHighlight('yellow')" title="黄色高亮"></div>
+  <div class="hl-btn" style="background:#b3e5fc" onclick="applyHighlight('blue')" title="蓝色高亮"></div>
+  <div class="hl-btn" style="background:#c8e6c9" onclick="applyHighlight('green')" title="绿色高亮"></div>
+  <div class="hl-btn" style="background:#f8bbd0" onclick="applyHighlight('pink')" title="粉色高亮"></div>
+  <div class="hl-sep"></div>
+  <div class="hl-action" onclick="askAIAboutSelection()">✦ 问AI</div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<div id="app">
+  <!-- TOPBAR -->
+  <header id="topbar">
+    <a class="logo" onclick="showHome()">
+      <div class="logo-mark"></div>
+      <div class="logo-text">Talent<span>Hub</span></div>
+    </a>
+    <div id="search-bar">
+      <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="search-input" type="text" placeholder="搜索知识库…" autocomplete="off" />
+      <div id="search-dropdown"></div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn-icon" onclick="toggleDarkMode()" title="切换主题">🌙</button>
+      <button class="btn-icon" title="收藏夹">
+        🔖
+        <span class="badge"></span>
+      </button>
+      <button class="btn-icon" onclick="toggleAI()" title="AI助手">✦</button>
+      <div class="avatar">李</div>
+    </div>
+  </header>
+
+  <div id="main">
+    <!-- SIDEBAR -->
+    <nav id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">导航</div>
+        <div class="nav-item active" onclick="showHome(); setActive(this)">
+          <span class="nav-item-icon">🏠</span> 首页
+        </div>
+        <div class="nav-item" onclick="showCategory('all'); setActive(this)">
+          <span class="nav-item-icon">📚</span> 全部文章
+          <span class="nav-item-count">48</span>
+        </div>
+        <div class="nav-item" onclick="showCategory('recent'); setActive(this)">
+          <span class="nav-item-icon">🕐</span> 最近阅读
+        </div>
+        <div class="nav-item" onclick="showCategory('starred'); setActive(this)">
+          <span class="nav-item-icon">⭐</span> 我的收藏
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">知识分类</div>
+        <div class="nav-item category-toggle" onclick="toggleCategory(this)">
+          <span class="nav-item-icon">💼</span> 工作指南
+          <span class="nav-item-count">16</span>
+          <span class="toggle-arrow">▶</span>
+        </div>
+        <div class="category-children" style="display:none">
+          <div class="nav-item" style="font-size:12.5px" onclick="openArticle('onboard'); setActive(this)">
+            <span class="nav-item-icon">📋</span> 入职流程指南
+          </div>
+          <div class="nav-item" style="font-size:12.5px" onclick="openArticle('salary'); setActive(this)">
+            <span class="nav-item-icon">💰</span> 薪酬福利解读
+          </div>
+          <div class="nav-item" style="font-size:12.5px" onclick="openArticle('performance'); setActive(this)">
+            <span class="nav-item-icon">📊</span> 绩效考核体系
+          </div>
+        </div>
+        <div class="nav-item category-toggle" onclick="toggleCategory(this)">
+          <span class="nav-item-icon">🏠</span> 生活指南
+          <span class="nav-item-count">14</span>
+          <span class="toggle-arrow">▶</span>
+        </div>
+        <div class="category-children" style="display:none">
+          <div class="nav-item" style="font-size:12.5px" onclick="openArticle('relocation'); setActive(this)">
+            <span class="nav-item-icon">🏙️</span> 城市安居指南
+          </div>
+          <div class="nav-item" style="font-size:12.5px">
+            <span class="nav-item-icon">🍜</span> 周边餐饮推荐
+          </div>
+        </div>
+        <div class="nav-item category-toggle" onclick="toggleCategory(this)">
+          <span class="nav-item-icon">🚀</span> 职业发展
+          <span class="nav-item-count">10</span>
+          <span class="toggle-arrow">▶</span>
+        </div>
+        <div class="category-children" style="display:none">
+          <div class="nav-item" style="font-size:12.5px">
+            <span class="nav-item-icon">📈</span> 晋升通道说明
+          </div>
+          <div class="nav-item" style="font-size:12.5px">
+            <span class="nav-item-icon">🎓</span> 培训学习资源
+          </div>
+        </div>
+        <div class="nav-item">
+          <span class="nav-item-icon">🎁</span> 福利待遇
+          <span class="nav-item-count">8</span>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-footer">
+        <button class="ai-btn-sidebar" onclick="toggleAI()">
+          <div class="ai-dot"></div>
+          问问AI助手
+        </button>
+      </div>
+    </nav>
+
+    <!-- CONTENT AREA -->
+    <div id="content-area">
+      <!-- HOME PAGE -->
+      <div id="home-page">
+        <div class="home-hero">
+          <h1>你好，李小明 👋<br>今天想了解什么？</h1>
+          <p>这里汇集了工作、生活、职业发展的全方位知识指南，帮助你更好地融入新环境、掌握职场规则。</p>
+          <div class="home-stats">
+            <div class="stat-card">
+              <div class="stat-icon">📄</div>
+              <div class="stat-number">48</div>
+              <div class="stat-label">知识文章</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">📂</div>
+              <div class="stat-number">6</div>
+              <div class="stat-label">知识分类</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">✦</div>
+              <div class="stat-number">AI</div>
+              <div class="stat-label">智能问答</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🔖</div>
+              <div class="stat-number">3</div>
+              <div class="stat-label">我的收藏</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title">知识分类</div>
+        </div>
+        <div class="category-grid">
+          <div class="category-card" onclick="openArticle('onboard')" style="border-top: 3px solid #1a6b5c">
+            <div class="cat-icon">💼</div>
+            <div class="cat-name">工作指南</div>
+            <div class="cat-desc">入职流程、规章制度、考勤管理</div>
+            <div class="cat-count">16篇文章</div>
+          </div>
+          <div class="category-card" onclick="openArticle('relocation')" style="border-top: 3px solid #2563eb">
+            <div class="cat-icon">🏠</div>
+            <div class="cat-name">生活指南</div>
+            <div class="cat-desc">城市安居、餐饮出行、周边配套</div>
+            <div class="cat-count">14篇文章</div>
+          </div>
+          <div class="category-card" style="border-top: 3px solid #c7621e">
+            <div class="cat-icon">🚀</div>
+            <div class="cat-name">职业发展</div>
+            <div class="cat-desc">晋升路径、绩效体系、培训资源</div>
+            <div class="cat-count">10篇文章</div>
+          </div>
+          <div class="category-card" onclick="openArticle('salary')" style="border-top: 3px solid #7c3aed">
+            <div class="cat-icon">💰</div>
+            <div class="cat-name">薪酬福利</div>
+            <div class="cat-desc">薪资构成、五险一金、员工福利</div>
+            <div class="cat-count">8篇文章</div>
+          </div>
+          <div class="category-card" style="border-top: 3px solid #c49b2f">
+            <div class="cat-icon">🤝</div>
+            <div class="cat-name">团队文化</div>
+            <div class="cat-desc">企业价值观、沟通规范、团队活动</div>
+            <div class="cat-count">6篇文章</div>
+          </div>
+          <div class="category-card" style="border-top: 3px solid #e11d48">
+            <div class="cat-icon">❓</div>
+            <div class="cat-name">常见问题</div>
+            <div class="cat-desc">新人疑问、政策解读、流程说明</div>
+            <div class="cat-count">12篇文章</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title">推荐阅读</div>
+          <a class="section-link">查看全部 →</a>
+        </div>
+        <div class="article-list">
+          <div class="article-card" onclick="openArticle('onboard')">
+            <div class="article-card-icon" style="background:#e0f2ed">📋</div>
+            <div class="article-card-body">
+              <div class="article-card-title">新员工入职全流程指南：从Offer到正式上岗</div>
+              <div class="article-card-excerpt">恭喜您收到我们的录用通知！本指南将带您一步步了解入职准备、报到流程、系统开通及试用期注意事项，帮助您顺利开启新旅程。</div>
+              <div class="article-card-meta">
+                <span class="article-tag" style="background:#e0f2ed;color:#1a6b5c">工作指南</span>
+                <span class="article-meta-item">👁 1,284</span>
+                <span class="article-meta-item">⏱ 8分钟</span>
+                <span class="article-meta-item">⭐ 4.9</span>
+              </div>
+            </div>
+          </div>
+          <div class="article-card" onclick="openArticle('salary')">
+            <div class="article-card-icon" style="background:#f3e8ff">💰</div>
+            <div class="article-card-body">
+              <div class="article-card-title">薪酬构成全解析：工资单每一项都是什么意思</div>
+              <div class="article-card-excerpt">很多新员工拿到第一张工资条时都会感到困惑。本文详细解读基本工资、绩效奖金、补贴、五险一金扣款等每一个项目的含义与计算方式。</div>
+              <div class="article-card-meta">
+                <span class="article-tag" style="background:#f3e8ff;color:#7c3aed">薪酬福利</span>
+                <span class="article-meta-item">👁 2,156</span>
+                <span class="article-meta-item">⏱ 12分钟</span>
+                <span class="article-meta-item">⭐ 4.8</span>
+              </div>
+            </div>
+          </div>
+          <div class="article-card" onclick="openArticle('relocation')">
+            <div class="article-card-icon" style="background:#dbeafe">🏙️</div>
+            <div class="article-card-body">
+              <div class="article-card-title">外地候选人安居指南：租房、交通、生活必备</div>
+              <div class="article-card-excerpt">如果您是从外地来到本市工作，这份指南将帮助您快速了解附近的租房区域、通勤路线规划、超市医院等生活配套设施的位置分布。</div>
+              <div class="article-card-meta">
+                <span class="article-tag" style="background:#dbeafe;color:#2563eb">生活指南</span>
+                <span class="article-meta-item">👁 987</span>
+                <span class="article-meta-item">⏱ 10分钟</span>
+                <span class="article-meta-item">⭐ 4.7</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARTICLE PAGE -->
+      <div id="article-page">
+        <div class="article-main" id="article-main-scroll">
+          <div class="article-header">
+            <div class="article-breadcrumb" id="article-breadcrumb"></div>
+            <h1 class="article-title" id="article-title"></h1>
+            <div class="article-meta-row">
+              <span class="article-meta-badge">👤 <strong>HR团队</strong></span>
+              <span class="article-meta-badge">📅 2025年6月更新</span>
+              <span class="article-meta-badge">👁 <span id="article-views">—</span> 次阅读</span>
+              <span class="article-meta-badge">⏱ <span id="article-time">—</span> 分钟</span>
+            </div>
+            <div class="article-action-row">
+              <button class="btn-action" id="btn-collect" onclick="toggleCollect(this)">🔖 收藏</button>
+              <button class="btn-action" onclick="shareArticle()">🔗 分享</button>
+              <button class="btn-action" onclick="downloadArticle()">⬇ 导出</button>
+              <button class="btn-action" onclick="toggleAI()" style="margin-left:auto">✦ 问AI助手</button>
+            </div>
+          </div>
+          <div class="article-body" id="article-body"></div>
+          <div class="rating-section">
+            <div class="rating-title">这篇文章对您有帮助吗？</div>
+            <div class="stars" id="star-rating">
+              <span class="star" onclick="rate(1)">★</span>
+              <span class="star" onclick="rate(2)">★</span>
+              <span class="star" onclick="rate(3)">★</span>
+              <span class="star" onclick="rate(4)">★</span>
+              <span class="star" onclick="rate(5)">★</span>
+            </div>
+            <div class="rating-thanks" id="rating-thanks">感谢您的反馈！✓</div>
+          </div>
+        </div>
+        <div class="article-toc">
+          <div class="toc-label">本文目录</div>
+          <div id="toc-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI PANEL -->
+<div id="ai-panel">
+  <div class="ai-header">
+    <div class="ai-header-icon">✦</div>
+    <div class="ai-header-text">
+      <div class="ai-header-title">AI 知识助手</div>
+      <div class="ai-header-sub">基于知识库内容智能问答</div>
+    </div>
+    <button class="ai-close" onclick="toggleAI()">✕</button>
+  </div>
+  <div id="ai-messages">
+    <div class="ai-welcome">
+      <div class="ai-welcome-icon">🤖</div>
+      <div class="ai-welcome-title">你好！我是TalentHub AI助手</div>
+      <div class="ai-welcome-text">我已读完所有知识库文章，你可以用自然语言向我提问，我会基于文档内容给出回答并标注来源。</div>
+      <div class="ai-suggestion-chips">
+        <button class="chip" onclick="askChip(this)">📋 入职第一天需要准备什么？</button>
+        <button class="chip" onclick="askChip(this)">💰 五险一金是怎么扣的？</button>
+        <button class="chip" onclick="askChip(this)">🏠 公司附近哪里适合租房？</button>
+        <button class="chip" onclick="askChip(this)">📊 绩效考核是什么时候进行的？</button>
+      </div>
+    </div>
+  </div>
+  <div class="ai-input-area">
+    <div class="ai-input-wrap">
+      <textarea id="ai-input" rows="1" placeholder="向AI提问…"></textarea>
+      <button id="ai-send" onclick="sendAIMessage()">↑</button>
+    </div>
+    <div class="ai-disclaimer">AI回答仅供参考，具体政策以HR通知为准</div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button id="ai-fab" onclick="toggleAI()" title="AI助手">✦</button>
+
+<script>
+// =========== DATA ===========
+const articles = {
+  onboard: {
+    title: '新员工入职全流程指南：从Offer到正式上岗',
+    category: '工作指南',
+    categoryColor: '#1a6b5c',
+    categoryBg: '#e0f2ed',
+    views: '1,284',
+    time: '8',
+    body: `
+<h2 id="h-welcome">欢迎加入我们</h2>
+<p>恭喜您成功加入TalentHub大家庭！本指南将系统性地帮助您了解<strong>从录用通知到正式上岗</strong>的全流程，请您仔细阅读每一个步骤。</p>
+
+<div class="callout info">
+  <div class="callout-icon">ℹ️</div>
+  <div class="callout-body">本指南适用于所有全职员工（含应届生）。如您是实习生或兼职，请参阅《实习生专属指南》。</div>
+</div>
+
+<h2 id="h-before">一、入职前准备</h2>
+<h3 id="h-doc">1.1 需要准备的材料</h3>
+<p>请在正式报到前，提前准备好以下材料，均需提供<strong>原件及复印件各一份</strong>：</p>
+<ul>
+  <li>身份证（正反面复印件）</li>
+  <li>最高学历证书及学位证书</li>
+  <li>上一家公司的离职证明（如有）</li>
+  <li>近3个月银行流水（部分岗位要求）</li>
+  <li>1寸白底证件照 × 6张</li>
+</ul>
+
+<div class="callout warning">
+  <div class="callout-icon">⚠️</div>
+  <div class="callout-body">请务必在入职当天携带全部原件，缺少材料可能导致入职手续延迟，影响社保开通时间。</div>
+</div>
+
+<h3 id="h-online">1.2 线上预约流程</h3>
+<p>在收到录用通知后，HR会通过邮件向您发送入职链接，请按以下步骤完成线上预约：</p>
+<ol>
+  <li>点击邮件中的<strong>「入职预约链接」</strong></li>
+  <li>选择您方便的入职日期（一般为周一至周四）</li>
+  <li>填写基本信息并上传证件照</li>
+  <li>系统自动生成入职确认码，截图保存备用</li>
+</ol>
+
+<h2 id="h-day1">二、入职当天</h2>
+<p>请于上午 <strong>9:00</strong> 准时到达公司前台，手持身份证及入职确认码，向接待人员出示。</p>
+
+<table>
+  <tr><th>时间段</th><th>流程</th><th>地点</th></tr>
+  <tr><td>09:00 – 09:30</td><td>前台签到，领取访客牌</td><td>1楼大厅</td></tr>
+  <tr><td>09:30 – 11:00</td><td>HR一对一沟通，签署劳动合同</td><td>HR办公室 (5F)</td></tr>
+  <tr><td>11:00 – 12:00</td><td>配发工牌、工位、办公设备</td><td>IT服务台 (3F)</td></tr>
+  <tr><td>14:00 – 16:00</td><td>新员工培训（公司文化、制度介绍）</td><td>大会议室 (8F)</td></tr>
+  <tr><td>16:00 – 17:30</td><td>与直属Leader见面，了解团队及工作安排</td><td>所在部门</td></tr>
+</table>
+
+<h2 id="h-first-week">三、入职后第一周</h2>
+<h3 id="h-system">3.1 系统开通清单</h3>
+<p>IT部门将在入职后 <strong>1-2个工作日</strong> 内为您开通以下系统账号，请及时确认：</p>
+<ul>
+  <li>企业邮箱（格式：firstname.lastname@company.com）</li>
+  <li>钉钉/企业微信（用于考勤打卡和内部沟通）</li>
+  <li>OA系统（用于申请审批、流程报销）</li>
+  <li>知识库平台（即您现在使用的 TalentHub）</li>
+</ul>
+
+<div class="callout tip">
+  <div class="callout-icon">💡</div>
+  <div class="callout-body">如系统账号在第3个工作日仍未开通，请直接联系 IT服务台 分机 <strong>8008</strong> 或发送邮件至 it@company.com。</div>
+</div>
+
+<h3 id="h-probation">3.2 试用期说明</h3>
+<p>根据劳动合同约定，试用期为 <strong>3至6个月</strong>（视岗位级别而定）。试用期内的注意事项：</p>
+<ul>
+  <li>试用期薪资为正式薪资的 <strong>100%</strong>（我公司不降薪试用）</li>
+  <li>试用期满前2周，直属上级将与您进行转正评估面谈</li>
+  <li>如有任何问题，欢迎随时联系您的HRBP</li>
+</ul>
+
+<pre><code># 联系HRBP获取帮助
+邮件：hrbp@company.com
+分机：8025 / 8026
+微信群：「入职新人答疑群」（HR会拉您加入）</code></pre>
+    `
+  },
+  salary: {
+    title: '薪酬构成全解析：工资单每一项都是什么意思',
+    category: '薪酬福利',
+    categoryColor: '#7c3aed',
+    categoryBg: '#f3e8ff',
+    views: '2,156',
+    time: '12',
+    body: `
+<h2 id="h-overview">工资单结构总览</h2>
+<p>很多新员工拿到第一张工资条时都会感到困惑——到手的钱比 Offer 上写的少很多？这完全正常。下面我们来逐项解读您工资单上的每一个数字。</p>
+<blockquote>您的<strong>税前总收入 = 基本工资 + 绩效奖金 + 各类补贴</strong>。实际到手金额还需扣除五险一金个人部分和个人所得税。</blockquote>
+
+<h2 id="h-components">各项收入构成</h2>
+<h3 id="h-base">基本工资</h3>
+<p>基本工资是您每月固定获得的薪酬，通常占总薪资包的 <strong>60%–70%</strong>。这是劳动合同中明确约定的金额，不与绩效挂钩，每月固定发放。</p>
+
+<h3 id="h-bonus">绩效奖金</h3>
+<p>绩效奖金根据您当月/当季的工作表现发放，一般占总薪资的 <strong>20%–30%</strong>。绩效等级（S/A/B/C）对应不同的发放比例：</p>
+<table>
+  <tr><th>绩效等级</th><th>说明</th><th>奖金比例</th></tr>
+  <tr><td>S（超越期望）</td><td>显著超越目标</td><td>120%</td></tr>
+  <tr><td>A（达成期望）</td><td>完全达成目标</td><td>100%</td></tr>
+  <tr><td>B（基本达成）</td><td>大部分达成目标</td><td>80%</td></tr>
+  <tr><td>C（待提升）</td><td>未达成目标</td><td>50%</td></tr>
+</table>
+
+<h2 id="h-insurance">五险一金详解</h2>
+<p>五险一金是国家强制要求缴纳的社会保障体系，分为<strong>公司缴纳部分</strong>和<strong>个人缴纳部分</strong>，个人部分会从您的税前工资中直接扣除。</p>
+
+<div class="callout info">
+  <div class="callout-icon">ℹ️</div>
+  <div class="callout-body">以下比例以【所在城市】标准为准。如您在外地分支机构工作，缴纳比例可能略有不同，请咨询当地HRBP。</div>
+</div>
+
+<table>
+  <tr><th>项目</th><th>个人缴纳比例</th><th>公司缴纳比例</th></tr>
+  <tr><td>养老保险</td><td>8%</td><td>16%</td></tr>
+  <tr><td>医疗保险</td><td>2% + 3元/月</td><td>10%</td></tr>
+  <tr><td>失业保险</td><td>0.5%</td><td>0.5%</td></tr>
+  <tr><td>工伤保险</td><td>0%</td><td>0.2%</td></tr>
+  <tr><td>生育保险</td><td>0%</td><td>0.8%</td></tr>
+  <tr><td>住房公积金</td><td>12%</td><td>12%</td></tr>
+</table>
+
+<h3 id="h-tax">个人所得税</h3>
+<p>个人所得税采用<strong>累进税率</strong>，每月按「应纳税所得额 = 税前总收入 - 五险一金个人部分 - 5000元起征点 - 专项附加扣除」计算。</p>
+
+<div class="callout tip">
+  <div class="callout-icon">💡</div>
+  <div class="callout-body">记得在「个人所得税」APP中填写子女教育、赡养老人、住房贷款利息等<strong>专项附加扣除</strong>，这可以合法减少您的纳税金额！</div>
+</div>
+
+<h2 id="h-paydate">发薪日与规则</h2>
+<ul>
+  <li>每月<strong>15日</strong>为固定发薪日（如遇节假日提前至最近工作日）</li>
+  <li>当月绩效奖金在<strong>次月15日</strong>随工资一并发放</li>
+  <li>年终奖一般在次年<strong>2–3月</strong>发放（视公司经营情况）</li>
+</ul>
+    `
+  },
+  relocation: {
+    title: '外地候选人安居指南：租房、交通、生活必备',
+    category: '生活指南',
+    categoryColor: '#2563eb',
+    categoryBg: '#dbeafe',
+    views: '987',
+    time: '10',
+    body: `
+<h2 id="h-intro">写在前面</h2>
+<p>如果您是从外地来到本市工作，首先为您的勇气点赞！🎉 异地工作的初期可能会有些不适应，但相信这份指南能帮助您更快地安顿下来，把精力集中在工作和生活上。</p>
+
+<h2 id="h-housing">租房攻略</h2>
+<h3 id="h-areas">推荐租房区域</h3>
+<p>根据公司位置和通勤便利性，我们推荐以下几个区域，综合考虑了房价、交通和生活便利度：</p>
+
+<table>
+  <tr><th>区域</th><th>参考租金</th><th>通勤时间</th><th>推荐理由</th></tr>
+  <tr><td>A区（公司附近）</td><td>3500–5000元/月</td><td>步行15分钟</td><td>最省时，适合工作强度大者</td></tr>
+  <tr><td>B区（地铁直达）</td><td>2500–3500元/月</td><td>地铁25分钟</td><td>性价比高，生活配套完善</td></tr>
+  <tr><td>C区（新兴区域）</td><td>2000–3000元/月</td><td>地铁+公交40分钟</td><td>环境好，适合追求居住品质者</td></tr>
+</table>
+
+<div class="callout warning">
+  <div class="callout-icon">⚠️</div>
+  <div class="callout-body">签约前请务必核实房东身份证与房产证，通过正规中介或平台（如贝壳、自如）租房更有保障。避免私下转账，留存合同及收据。</div>
+</div>
+
+<h3 id="h-platforms">找房平台推荐</h3>
+<ul>
+  <li><strong>整租首选</strong>：贝壳找房、链家（信息真实度高）</li>
+  <li><strong>合租/公寓</strong>：自如、蛋壳、青客（统一管理，省心）</li>
+  <li><strong>短租过渡</strong>：民宿/酒式公寓（入职初期临时落脚）</li>
+</ul>
+
+<h2 id="h-transport">通勤交通</h2>
+<h3 id="h-metro">地铁路线</h3>
+<p>公司所在楼栋距<strong>「科技园站」（X号线）</strong>步行约8分钟。以下是主要地铁换乘点的参考信息：</p>
+<ul>
+  <li>如果您住在B区：乘坐X号线，全程约25分钟，无需换乘</li>
+  <li>如果您住在C区：需在「中央广场站」换乘Y号线，全程约40分钟</li>
+</ul>
+
+<div class="callout tip">
+  <div class="callout-icon">💡</div>
+  <div class="callout-body">新注册城市交通卡可享<strong>首月折扣优惠</strong>，在地铁站服务中心或支付宝/微信城市出行小程序均可办理。月卡更划算！</div>
+</div>
+
+<h2 id="h-life">生活配套</h2>
+<h3 id="h-nearby">公司周边地图</h3>
+<p>以公司为圆心，步行15分钟内，您能找到：</p>
+<ul>
+  <li>🍜 <strong>餐饮</strong>：公司楼下「员工餐厅」（内部补贴价，日均约15元），园区内有多个外卖自提点</li>
+  <li>🏪 <strong>超市</strong>：华润万家（步行10分钟）、便利蜂（楼下）</li>
+  <li>🏥 <strong>医院</strong>：XX区人民医院（步行20分钟），公司内设医务室</li>
+  <li>🏋️ <strong>健身</strong>：公司内部健身房（员工免费使用！）</li>
+  <li>☕ <strong>咖啡</strong>：Manner、Seesaw（园区内各一家）</li>
+</ul>
+
+<h3 id="h-settlement">户籍与社保</h3>
+<p>公司将在您入职后<strong>第2个月</strong>为您在本市开始缴纳社保（公积金同步开通）。如需办理本市居住证，请带齐以下材料前往所在街道居委会：</p>
+<ol>
+  <li>本人身份证原件</li>
+  <li>租房合同或居住地址证明</li>
+  <li>劳动合同复印件</li>
+  <li>近期照片2张（1寸）</li>
+</ol>
+    `
+  }
+};
+
+// =========== AI KNOWLEDGE BASE ===========
+const aiKnowledge = {
+  '入职': { answer: '**入职流程分为四个阶段：**\n\n1. **入职前准备**：请准备身份证、学历证书、离职证明、证件照等材料\n2. **报到当天**：9:00前往前台签到，上午完成HR面谈和合同签署\n3. **系统开通**：IT部门在1-2工作日内开通企业邮箱、钉钉等账号\n4. **试用期**：3-6个月，薪资为正式薪资100%（不降薪）', source: '新员工入职全流程指南', articleId: 'onboard' },
+  '五险': { answer: '**五险一金个人缴纳比例如下：**\n\n- 养老保险：**8%**\n- 医疗保险：**2% + 3元/月**\n- 失业保险：**0.5%**\n- 工伤/生育：**0%**（全部由公司承担）\n- 住房公积金：**12%**\n\n这些金额会从税前工资中扣除，但养老和公积金都是自己的积累。', source: '薪酬构成全解析', articleId: 'salary' },
+  '工资': { answer: '**薪资构成 = 基本工资 + 绩效奖金 + 补贴**\n\n- 基本工资占总包约60-70%，固定发放\n- 绩效奖金按等级发放（S:120% / A:100% / B:80% / C:50%）\n- **发薪日为每月15日**，如遇节假日提前\n- 年终奖一般次年2-3月发放', source: '薪酬构成全解析', articleId: 'salary' },
+  '租房': { answer: '**公司附近推荐三个租房区域：**\n\n- **A区**（公司附近）：3500-5000元，步行15分钟最省时\n- **B区**（地铁直达）：2500-3500元，地铁25分钟性价比高\n- **C区**（新兴区域）：2000-3000元，环境好适合追求品质\n\n推荐贝壳找房、链家等正规平台，注意核实房东证件。', source: '外地候选人安居指南', articleId: 'relocation' },
+  '绩效': { answer: '**绩效考核体系说明：**\n\n绩效分为S/A/B/C四个等级，对应奖金发放比例为120%/100%/80%/50%。每季度末进行一次绩效评估，由直属上级打分后HR复核。试用期满前2周会进行转正评估面谈。', source: '薪酬构成全解析', articleId: 'salary' },
+  'default': { answer: '根据知识库的内容，我来为您解答。\n\n您的问题涉及的内容我已经在知识库中检索，建议您查阅以下相关文章获取更详细的信息。如果您有更具体的问题，比如"入职需要什么材料"、"工资什么时候发"等，我可以给出更精准的回答。', source: null, articleId: null }
+};
+
+function getAIResponse(question) {
+  const q = question;
+  for (const key of Object.keys(aiKnowledge)) {
+    if (key !== 'default' && q.includes(key)) return aiKnowledge[key];
+  }
+  return aiKnowledge['default'];
+}
+
+// =========== STATE ===========
+let currentArticle = null;
+let aiOpen = false;
+let selectedText = '';
+
+// =========== NAVIGATION ===========
+function showHome() {
+  document.getElementById('home-page').style.display = 'block';
+  document.getElementById('article-page').classList.remove('visible');
+  document.getElementById('reading-progress-bar').style.width = '0';
+  currentArticle = null;
+}
+
+function showCategory(cat) {
+  showToast('📚 分类筛选功能开发中…');
+}
+
+function openArticle(id) {
+  const article = articles[id];
+  if (!article) return;
+  currentArticle = id;
+
+  document.getElementById('home-page').style.display = 'none';
+  document.getElementById('article-page').classList.add('visible');
+
+  document.getElementById('article-breadcrumb').innerHTML =
+    `<a onclick="showHome()">首页</a><span class="breadcrumb-sep">/</span><span style="color:${article.categoryColor}">${article.category}</span><span class="breadcrumb-sep">/</span><span>${article.title.substring(0,16)}…</span>`;
+  document.getElementById('article-title').textContent = article.title;
+  document.getElementById('article-views').textContent = article.views;
+  document.getElementById('article-time').textContent = article.time;
+  document.getElementById('article-body').innerHTML = article.body;
+  document.getElementById('btn-collect').classList.remove('active');
+
+  // Add copy buttons to pre elements
+  document.querySelectorAll('.article-body pre').forEach(pre => {
+    if (!pre.querySelector('.copy-btn')) {
+      const btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.textContent = '复制';
+      btn.onclick = () => { navigator.clipboard.writeText(pre.querySelector('code').textContent); btn.textContent='已复制'; setTimeout(()=>btn.textContent='复制', 2000); };
+      pre.style.position = 'relative';
+      pre.appendChild(btn);
+    }
+  });
+
+  buildTOC();
+  setupReadingProgress();
+  setupHighlight();
+  window.scrollTo(0,0);
+
+  // Reset rating
+  document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+  document.getElementById('rating-thanks').style.display = 'none';
+}
+
+// =========== TOC ===========
+function buildTOC() {
+  const headings = document.querySelectorAll('.article-body h2, .article-body h3');
+  const toc = document.getElementById('toc-list');
+  toc.innerHTML = '';
+  headings.forEach((h, i) => {
+    if (!h.id) h.id = 'heading-' + i;
+    const item = document.createElement('div');
+    item.className = 'toc-item' + (h.tagName === 'H3' ? ' level-2' : '');
+    item.textContent = h.textContent;
+    item.onclick = () => { h.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    toc.appendChild(item);
+  });
+}
+
+// =========== READING PROGRESS ===========
+function setupReadingProgress() {
+  const scrollEl = document.getElementById('article-main-scroll');
+  const bar = document.getElementById('reading-progress-bar');
+  scrollEl.onscroll = () => {
+    const { scrollTop, scrollHeight, clientHeight } = scrollEl;
+    const pct = scrollHeight - clientHeight > 0 ? (scrollTop / (scrollHeight - clientHeight)) * 100 : 0;
+    bar.style.width = pct + '%';
+    updateActiveTOC(scrollEl);
+  };
+}
+
+function updateActiveTOC(scrollEl) {
+  const headings = document.querySelectorAll('.article-body h2, .article-body h3');
+  const tocItems = document.querySelectorAll('.toc-item');
+  let activeIdx = 0;
+  headings.forEach((h, i) => {
+    if (h.getBoundingClientRect().top < 120) activeIdx = i;
+  });
+  tocItems.forEach((item, i) => {
+    item.classList.toggle('active', i === activeIdx);
+  });
+}
+
+// =========== HIGHLIGHT ===========
+function setupHighlight() {
+  const body = document.getElementById('article-body');
+  const toolbar = document.getElementById('highlight-toolbar');
+  body.onmouseup = (e) => {
+    const sel = window.getSelection();
+    if (sel && sel.toString().trim().length > 2) {
+      selectedText = sel.toString();
+      const rect = sel.getRangeAt(0).getBoundingClientRect();
+      toolbar.style.top = (rect.top + window.scrollY - 48) + 'px';
+      toolbar.style.left = (rect.left + rect.width / 2 - 80) + 'px';
+      toolbar.classList.add('visible');
+    } else {
+      toolbar.classList.remove('visible');
+      selectedText = '';
+    }
+  };
+  document.addEventListener('mousedown', (e) => {
+    if (!toolbar.contains(e.target)) toolbar.classList.remove('visible');
+  });
+}
+
+function applyHighlight(color) {
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) return;
+  try {
+    const range = sel.getRangeAt(0);
+    const span = document.createElement('span');
+    span.className = 'highlight-' + color;
+    span.title = '点击移除高亮';
+    span.onclick = (e) => { const parent = e.target.parentNode; while(e.target.firstChild) parent.insertBefore(e.target.firstChild, e.target); e.target.remove(); };
+    range.surroundContents(span);
+    sel.removeAllRanges();
+    document.getElementById('highlight-toolbar').classList.remove('visible');
+    showToast('✏️ 高亮标注已添加');
+  } catch(e) { showToast('⚠️ 无法高亮跨元素的选区'); }
+}
+
+function askAIAboutSelection() {
+  if (!selectedText) return;
+  document.getElementById('highlight-toolbar').classList.remove('visible');
+  openAI();
+  setTimeout(() => {
+    document.getElementById('ai-input').value = '关于「' + selectedText.substring(0, 30) + '」能详细解释一下吗？';
+    document.getElementById('ai-input').focus();
+  }, 300);
+}
+
+// =========== ARTICLE ACTIONS ===========
+function toggleCollect(btn) {
+  const active = btn.classList.toggle('active');
+  showToast(active ? '🔖 已加入收藏夹' : '🗑 已取消收藏');
+}
+function shareArticle() {
+  navigator.clipboard.writeText(window.location.href).then(() => showToast('🔗 链接已复制到剪贴板'));
+}
+function downloadArticle() { showToast('⬇️ 正在生成PDF，请稍候…'); setTimeout(() => showToast('✅ PDF已准备好，请查收'), 2000); }
+
+function rate(n) {
+  document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n));
+  setTimeout(() => { document.getElementById('rating-thanks').style.display = 'block'; }, 300);
+  showToast('⭐ 感谢您的评价！');
+}
+
+// =========== SIDEBAR TOGGLE ===========
+function toggleCategory(el) {
+  el.classList.toggle('open');
+  const next = el.nextElementSibling;
+  if (next && next.classList.contains('category-children')) {
+    next.style.display = next.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+function setActive(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// =========== AI PANEL ===========
+function toggleAI() { aiOpen ? closeAI() : openAI(); }
+function openAI() {
+  aiOpen = true;
+  document.getElementById('ai-panel').classList.add('open');
+  document.getElementById('ai-fab').classList.add('hidden');
+  setTimeout(() => document.getElementById('ai-input').focus(), 350);
+}
+function closeAI() {
+  aiOpen = false;
+  document.getElementById('ai-panel').classList.remove('open');
+  document.getElementById('ai-fab').classList.remove('hidden');
+}
+
+document.getElementById('ai-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAIMessage(); }
+});
+document.getElementById('ai-input').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+
+function askChip(btn) {
+  document.getElementById('ai-input').value = btn.textContent.replace(/^[^\s]+\s/, '');
+  sendAIMessage();
+}
+
+function sendAIMessage() {
+  const input = document.getElementById('ai-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  input.style.height = 'auto';
+
+  // Remove welcome if first message
+  const welcome = document.querySelector('.ai-welcome');
+  if (welcome) welcome.remove();
+
+  addMessage('user', text);
+  const typingEl = addTyping();
+
+  setTimeout(() => {
+    typingEl.remove();
+    const resp = getAIResponse(text);
+    addMessage('ai', resp.answer, resp.source, resp.articleId);
+  }, 900 + Math.random() * 600);
+}
+
+function addMessage(role, text, source, articleId) {
+  const messages = document.getElementById('ai-messages');
+  const msg = document.createElement('div');
+  msg.className = 'msg ' + role;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+
+  if (role === 'ai') {
+    // Simple markdown rendering
+    let html = text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/\n- (.*)/g, '<li>$1</li>')
+      .replace(/\n(\d+)\. (.*)/g, '<li>$2</li>');
+    html = '<p>' + html + '</p>';
+    html = html.replace(/<p>(<li>)/g, '<ul>$1').replace(/(<\/li>)<\/p>/g, '$1</ul>');
+    bubble.innerHTML = html;
+  } else {
+    bubble.textContent = text;
+  }
+
+  msg.appendChild(bubble);
+
+  if (source && role === 'ai') {
+    const srcEl = document.createElement('div');
+    srcEl.className = 'msg-source';
+    srcEl.innerHTML = `<span>📄 引用来源：</span><span class="msg-source-tag">${source}</span>`;
+    if (articleId) srcEl.onclick = () => { openArticle(articleId); closeAI(); };
+    msg.appendChild(srcEl);
+  }
+
+  messages.appendChild(msg);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function addTyping() {
+  const messages = document.getElementById('ai-messages');
+  const msg = document.createElement('div');
+  msg.className = 'msg ai';
+  msg.innerHTML = `<div class="ai-typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  messages.appendChild(msg);
+  messages.scrollTop = messages.scrollHeight;
+  return msg;
+}
+
+// =========== SEARCH ===========
+const searchData = [
+  { title: '新员工入职全流程指南', cat: '工作指南', icon: '📋', id: 'onboard' },
+  { title: '薪酬构成全解析', cat: '薪酬福利', icon: '💰', id: 'salary' },
+  { title: '外地候选人安居指南', cat: '生活指南', icon: '🏙️', id: 'relocation' },
+  { title: '五险一金缴纳比例说明', cat: '薪酬福利', icon: '📊', id: 'salary' },
+  { title: '绩效考核体系介绍', cat: '职业发展', icon: '🚀', id: null },
+  { title: '工位申请与IT设备领取', cat: '工作指南', icon: '💻', id: 'onboard' },
+  { title: '年假与带薪休假政策', cat: '福利待遇', icon: '🌴', id: null },
+  { title: '企业医疗保险使用指南', cat: '福利待遇', icon: '🏥', id: null },
+];
+
+const searchInput = document.getElementById('search-input');
+const searchDropdown = document.getElementById('search-dropdown');
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim();
+  if (!q) { searchDropdown.classList.remove('visible'); return; }
+  const results = searchData.filter(a => a.title.includes(q) || a.cat.includes(q));
+  renderSearch(results, q);
+});
+searchInput.addEventListener('focus', () => { if (searchInput.value.trim()) searchDropdown.classList.add('visible'); });
+document.addEventListener('click', (e) => { if (!e.target.closest('#search-bar')) searchDropdown.classList.remove('visible'); });
+
+function renderSearch(results, q) {
+  if (!results.length) {
+    searchDropdown.innerHTML = `<div class="search-no-result">未找到"${q}"的相关内容<br><small style="color:var(--ink-5)">试试问问AI助手</small></div>`;
+  } else {
+    searchDropdown.innerHTML = `<div class="search-section-label">搜索结果 (${results.length})</div>` +
+      results.slice(0, 6).map(r => `
+        <div class="search-result-item" onclick="searchClick('${r.id}')">
+          <div class="search-result-icon" style="background:var(--paper)">${r.icon}</div>
+          <div>
+            <div class="search-result-title">${r.title.replace(q, `<em>${q}</em>`)}</div>
+            <div class="search-result-cat">${r.cat}</div>
+          </div>
+        </div>`).join('');
+  }
+  searchDropdown.classList.add('visible');
+}
+
+function searchClick(id) {
+  searchDropdown.classList.remove('visible');
+  searchInput.value = '';
+  if (id) openArticle(id);
+}
+
+// =========== DARK MODE ===========
+let darkMode = false;
+function toggleDarkMode() {
+  darkMode = !darkMode;
+  const root = document.documentElement;
+  if (darkMode) {
+    root.style.setProperty('--paper', '#141b26');
+    root.style.setProperty('--paper-2', '#1e2a3a');
+    root.style.setProperty('--paper-3', '#2a3a4e');
+    root.style.setProperty('--white', '#1a2436');
+    root.style.setProperty('--ink', '#e8edf2');
+    root.style.setProperty('--ink-2', '#c5d0db');
+    root.style.setProperty('--ink-3', '#8fa5b8');
+    root.style.setProperty('--ink-4', '#5a7a96');
+    root.style.setProperty('--ink-5', '#3d5a72');
+    document.querySelector('[onclick="toggleDarkMode()"]').textContent = '☀️';
+  } else {
+    root.style.cssText = '';
+    document.querySelector('[onclick="toggleDarkMode()"]').textContent = '🌙';
+  }
+  showToast(darkMode ? '🌙 深色模式已开启' : '☀️ 浅色模式已开启');
+}
+
+// =========== TOAST ===========
+function showToast(msg) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3200);
+}
+
+// =========== INIT ===========
+showHome();
+</script>
+</body>
+</html>
